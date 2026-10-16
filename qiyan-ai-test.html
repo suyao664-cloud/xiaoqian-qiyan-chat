@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>栖宴 AI 测试页</title>
+<style>body{font-family:system-ui,sans-serif;background:#f7f0fb;color:#3e304c;max-width:680px;margin:0 auto;padding:20px}h1{font-size:22px}#log{background:white;border-radius:16px;min-height:240px;padding:16px;white-space:pre-wrap;overflow-wrap:anywhere}.msg{margin:12px 0;padding:10px;border-radius:12px;background:#f0e6f5}.me{background:#e7d5f6}textarea{width:100%;box-sizing:border-box;border:1px solid #bda8ce;border-radius:12px;padding:12px;font:inherit}button{border:0;background:#76558d;color:white;padding:12px 22px;border-radius:12px;margin-top:10px}small{color:#766b7e}</style>
+</head><body>
+<h1>♡ 栖宴 · AI 测试页</h1>
+<p><small>仅用于测试文字回复。不会修改原来的小窝；暂不接入语音。</small></p>
+<div id="log" aria-live="polite">连接尚未测试。先部署测试 Worker 的 AI 接口，再发送消息。</div>
+<p><textarea id="message" rows="3" placeholder="想和栖宴说点什么……"></textarea></p>
+<button id="send">发送测试消息</button>
+<script>
+const endpoint='https://xiaoqian-qiyan-test.suyao664.workers.dev/';
+const log=document.getElementById('log'),input=document.getElementById('message'),button=document.getElementById('send');
+const history=[];
+function append(who,content,me=false){if(log.textContent.startsWith('连接尚未测试'))log.textContent='';const p=document.createElement('div');p.className='msg'+(me?' me':'');p.textContent=who+'：'+content;log.appendChild(p);}
+button.onclick=async()=>{const message=input.value.trim();if(!message)return;input.value='';append('你',message,true);button.disabled=true;try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,history:history.slice(-8)})});const raw=await r.text();let data;try{data=JSON.parse(raw)}catch{throw Error('Worker 尚未配置聊天接口（HTTP '+r.status+'）')}if(!r.ok)throw Error(data.error||'HTTP '+r.status);const reply=data.reply;if(typeof reply!=='string')throw Error('Worker 返回格式不符合预期');append('栖宴',reply);history.push({role:'user',content:message},{role:'assistant',content:reply});}catch(e){append('提示',e.message+'。请先完成测试 Worker 代码部署。')}finally{button.disabled=false}};
+</script>
+</body></html>
