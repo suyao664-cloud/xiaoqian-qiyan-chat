@@ -11,7 +11,7 @@
 <p><textarea id="message" rows="3" placeholder="想和栖宴说点什么……"></textarea></p>
 <button id="send">发送测试消息</button>
 <script>
-const endpoint='https://xiaoqian-qiyan-test.suyao664.workers.dev/';
+const endpoint='https://xiaoqian-qiyan-test.suyao664.workers.dev/chat';
 const log=document.getElementById('log'),input=document.getElementById('message'),button=document.getElementById('send');
 const history=[];
 function append(who,content,me=false){if(log.textContent.startsWith('连接尚未测试'))log.textContent='';const p=document.createElement('div');p.className='msg'+(me?' me':'');p.textContent=who+'：'+content;log.appendChild(p);}
